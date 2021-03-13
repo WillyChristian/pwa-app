@@ -1,0 +1,17 @@
+{
+	"short_name": "weather pwa",
+	"name": "My Weather App",
+	"icons": [
+		{
+			"src": "./wicon.png",
+			"type": "image/png",
+			"size": "144x144"
+		}
+	],
+	"starts_url": ".",
+	"description": "Weather forecast information",
+	"background_color": "#f1f1f1",
+	"theme_color": "#fd1d1d",
+	"display": "standalone",
+	"scope": "/"
+}

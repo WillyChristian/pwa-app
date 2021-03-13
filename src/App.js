@@ -3,13 +3,12 @@ import axios from "axios";
 
 import {
 	Card,
-    CardActionArea,
+	CardActionArea,
 	CardContent,
-	CardMedia,
 	InputLabel,
 	makeStyles,
 	TextField,
-    Typography,
+	Typography,
 } from "@material-ui/core";
 
 const MainStyle = makeStyles({
@@ -17,7 +16,8 @@ const MainStyle = makeStyles({
 		margin: "0",
 	},
 	header: {
-		backgroundColor: "#3f3f79",
+		background:
+			"linear-gradient(108deg, rgba(131,58,180,1) 7%, rgba(253,29,29,1) 47%, rgba(252,176,69,1) 95%)",
 		minHeight: "100vh",
 		display: "flex",
 		flexDirection: "column",
@@ -41,15 +41,22 @@ const MainStyle = makeStyles({
 		},
 	},
 	card: {
-        margin: '1.5rem 0rem',  
+		margin: "1.5rem 0rem",
 		maxWidth: "500px",
-
 	},
-    card_content:{
-        display: "flex",
-        flexDirection: "row",
-        justifyContent:"center"
-    }
+	card_header:{
+		display:"flex",
+		justifyContent: "center",
+		alignItems:"center",
+		border: "2px solid",
+		background:"linear-gradient(177deg, rgba(255,255,255,1) 0%, rgba(157,157,157,1) 65%, rgba(121,121,121,1) 100%)"
+	},
+	card_content: {
+		display: "flex",
+		flexDirection: "row",
+		justifyContent: "center",
+		alignItems: "center",
+	},
 });
 
 const URL = "https://api.openweathermap.org/data/2.5/weather";
@@ -70,7 +77,6 @@ const Fetcher = async (query) => {
 function App() {
 	const [query, setQuery] = useState("");
 	const [data, setData] = useState("");
-	const [card, setCard] = useState("");
 	const styles = MainStyle();
 
 	const handleChange = (e) => {
@@ -79,29 +85,24 @@ function App() {
 	const search = async (e) => {
 		if (e.key === "Enter") {
 			const data = await Fetcher(query);
+			if(data.status === "404"){
+				alert("Falha ao encontrar a cidade. Digite sem acentuação e/ou verifique o nome digitado")
+			}
 			setData(data);
-            if(data.weather[0].main === "Clouds"){
-                setCard("/img/cloudy/favicon256.ico")
-            }
-            if(data.weather[0].main === "Clear"){
-                setCard("/img/sunny/favicon256.ico")
-            }
-            if(data.weather[0].main === "Rain"){
-                setCard("/img/raining/favicon256.ico")
-            }
-            console.log(data.weather[0])
-            setQuery("")
+			setQuery("");
 		}
 	};
 	return (
 		<div className={styles.header}>
 			<section className={styles.search}>
-				<InputLabel htmlFor='tempature'>
-					Digite o Nome da Cidade:
+				<InputLabel htmlFor='temperature'>
+					Digite o Nome da Cidade (sem acentuação):
 				</InputLabel>
 				<TextField
+					fullWidth
+					id="temperature"
 					value={query}
-					name='tempature'
+					name='temperature'
 					variant='standard'
 					onChange={(e) => handleChange(e.target.value)}
 					onKeyPress={search}
@@ -109,23 +110,28 @@ function App() {
 			</section>
 			<section>
 				{data && (
-                    
 					<Card className={styles.card}>
-                        <CardActionArea>
-                            <CardMedia 
-                                component='img'
-                                alt="icon"
-                                height="140"
-                                width="240"
-                                image={card}
-                            />
-                            <CardContent className={styles.card_content}>
-                                <Typography variant={"h3"}>{Math.round(data.main.temp)}
-                                </Typography>
-                                <Typography variant={"h4"}><sup> <code>&deg;</code></sup></Typography>
-                                <Typography variant={"h3"}>C</Typography>
-                            </CardContent>
-                        </CardActionArea>
+						<CardActionArea>
+							<CardContent>
+								<div className={styles.card_header}>
+									<img
+										src={`http://openweathermap.org/img/wn/${data.weather[0].icon}@2x.png`}
+										alt={data.weather[0].description}
+									/>
+								</div>
+							</CardContent>
+							<CardContent className={styles.card_content}>
+								<Typography variant={"h3"}>
+									{Math.round(data.main.temp)}
+								</Typography>
+								<Typography variant={"h4"}>
+									<sup>
+										<code>&deg;</code>
+									</sup>
+								</Typography>
+								<Typography variant={"h3"}>C</Typography>
+							</CardContent>
+						</CardActionArea>
 					</Card>
 				)}
 			</section>
